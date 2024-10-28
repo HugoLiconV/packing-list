@@ -2,9 +2,8 @@
 import { useState, useEffect, useRef } from "react";
 import { PackingItem, DEFAULT_ITEMS } from "../constants/items";
 import { PackingSection } from "../components/PackingSection";
-import { ToggleAllButton } from "../components/ToggleAllButton";
-import { AddItemForm } from "../components/AddItemForm";
 import { Toaster, toast } from "react-hot-toast";
+import { CollapsibleAddForm } from "../components/CollapsibleAddForm";
 
 export default function Home() {
   const [items, setItems] = useState<PackingItem[]>([]);
@@ -79,10 +78,6 @@ export default function Home() {
       }
     }
   }, [items]);
-
-  const existingCategories = Array.from(
-    new Set(items.map(item => item.category))
-  );
 
   const deleteCategory = (categoryToDelete: string) => {
     const itemsToDelete = items.filter(
@@ -165,8 +160,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Toaster />
-      <div className="max-w-md mx-auto p-4 pb-24">
+      <div className="max-w-md mx-auto p-4 pb-32">
         <header className="mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">Packing List</h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -174,10 +168,16 @@ export default function Home() {
           </p>
         </header>
 
-        <AddItemForm
-          existingCategories={existingCategories}
-          onAddItem={addItem}
-        />
+        <div className="mb-6">
+          <button
+            onClick={toggleAll}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium transition-colors shadow-sm"
+          >
+            {items.every(item => item.checked)
+              ? "Uncheck All Items"
+              : "Check All Items"}
+          </button>
+        </div>
 
         <main className="space-y-4">
           {Object.entries(groupedItems).map(([category, categoryItems]) => (
@@ -192,9 +192,16 @@ export default function Home() {
             />
           ))}
         </main>
-
-        <ToggleAllButton items={items} onToggleAll={toggleAll} />
       </div>
+
+      <CollapsibleAddForm
+        existingCategories={Array.from(
+          new Set(items.map(item => item.category))
+        )}
+        onAddItem={addItem}
+      />
+
+      <Toaster />
     </div>
   );
 }
