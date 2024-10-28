@@ -1,11 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PackingItem, DEFAULT_ITEMS } from "../constants/items";
 import { PackingSection } from "../components/PackingSection";
 import { ToggleAllButton } from "../components/ToggleAllButton";
+import { AddItemForm } from "../components/AddItemForm";
 
 export default function Home() {
   const [items, setItems] = useState<PackingItem[]>([]);
+  const lastAddedCategoryRef = useRef<string | null>(null);
 
   useEffect(() => {
     const savedItems = localStorage.getItem("packingListItems");
@@ -56,6 +58,39 @@ export default function Home() {
     return acc;
   }, {} as Record<string, PackingItem[]>);
 
+  const addItem = (newItem: Omit<PackingItem, "id">) => {
+    const item: PackingItem = {
+      ...newItem,
+      id: crypto.randomUUID()
+    };
+    setItems([...items, item]);
+    lastAddedCategoryRef.current = item.category;
+  };
+
+  useEffect(() => {
+    if (lastAddedCategoryRef.current) {
+      const element = document.getElementById(
+        `category-${lastAddedCategoryRef.current}`
+      );
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+        lastAddedCategoryRef.current = null;
+      }
+    }
+  }, [items]);
+
+  const existingCategories = Array.from(
+    new Set(items.map(item => item.category))
+  );
+
+  const deleteCategory = (categoryToDelete: string) => {
+    setItems(items.filter(item => item.category !== categoryToDelete));
+  };
+
+  const deleteItem = (itemId: string) => {
+    setItems(items.filter(item => item.id !== itemId));
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-md mx-auto p-4 pb-24">
@@ -66,6 +101,11 @@ export default function Home() {
           </p>
         </header>
 
+        <AddItemForm
+          existingCategories={existingCategories}
+          onAddItem={addItem}
+        />
+
         <main className="space-y-4">
           {Object.entries(groupedItems).map(([category, categoryItems]) => (
             <PackingSection
@@ -74,6 +114,8 @@ export default function Home() {
               items={categoryItems}
               onToggleItem={toggleItem}
               onToggleSection={toggleSection}
+              onDeleteCategory={deleteCategory}
+              onDeleteItem={deleteItem}
             />
           ))}
         </main>
