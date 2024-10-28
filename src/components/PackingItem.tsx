@@ -12,29 +12,35 @@ export function PackingItem({ item, onToggle, onDelete }: PackingItemProps) {
   const [progress, setProgress] = useState(0);
   const pressTimer = useRef<NodeJS.Timeout>();
   const progressTimer = useRef<NodeJS.Timeout>();
-  const PRESS_DURATION = 1500; // 1.5 seconds for deletion
-  const PROGRESS_INTERVAL = 50; // Update progress every 50ms
+  const animationTimer = useRef<NodeJS.Timeout>();
+  const PRESS_DURATION = 2500; // 1.5 seconds for deletion
+  const ANIMATION_DELAY = 1000; // 1 second delay before showing animation
+  const PROGRESS_INTERVAL = 50;
 
   const startPress = () => {
-    setPressing(true);
-    setProgress(0);
-
-    // Start the deletion timer
+    // Start the deletion timer immediately
     pressTimer.current = setTimeout(() => {
+      if (navigator.vibrate) {
+        navigator.vibrate(200);
+      }
       onDelete(item.id);
       setPressing(false);
       setProgress(0);
-      if (navigator.vibrate) {
-        navigator.vibrate(200); // 200ms vibration
-      }
     }, PRESS_DURATION);
 
-    // Start the progress animation
-    let currentProgress = 0;
-    progressTimer.current = setInterval(() => {
-      currentProgress += (PROGRESS_INTERVAL / PRESS_DURATION) * 100;
-      setProgress(Math.min(currentProgress, 100));
-    }, PROGRESS_INTERVAL);
+    // Delay showing the animation
+    animationTimer.current = setTimeout(() => {
+      setPressing(true);
+      setProgress(0);
+
+      // Start the progress animation
+      let currentProgress = 0;
+      progressTimer.current = setInterval(() => {
+        currentProgress +=
+          (PROGRESS_INTERVAL / (PRESS_DURATION - ANIMATION_DELAY)) * 100;
+        setProgress(Math.min(currentProgress, 100));
+      }, PROGRESS_INTERVAL);
+    }, ANIMATION_DELAY);
   };
 
   const endPress = () => {
@@ -42,6 +48,7 @@ export function PackingItem({ item, onToggle, onDelete }: PackingItemProps) {
     setProgress(0);
     if (pressTimer.current) clearTimeout(pressTimer.current);
     if (progressTimer.current) clearInterval(progressTimer.current);
+    if (animationTimer.current) clearTimeout(animationTimer.current);
   };
 
   // Cleanup
@@ -49,6 +56,7 @@ export function PackingItem({ item, onToggle, onDelete }: PackingItemProps) {
     return () => {
       if (pressTimer.current) clearTimeout(pressTimer.current);
       if (progressTimer.current) clearInterval(progressTimer.current);
+      if (animationTimer.current) clearTimeout(animationTimer.current);
     };
   }, []);
 
