@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { PackingItem, DEFAULT_ITEMS } from "../constants/items";
+import { PackingItem } from "../constants/items";
 import { PackingSection } from "../components/PackingSection";
 import { Toaster, toast } from "react-hot-toast";
 import { CollapsibleAddForm } from "../components/CollapsibleAddForm";
