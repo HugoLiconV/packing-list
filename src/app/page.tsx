@@ -179,17 +179,29 @@ export default function Home() {
           </header>
 
           <main className="space-y-4 mb-16">
-            {Object.entries(groupedItems).map(([category, categoryItems]) => (
-              <PackingSection
-                key={category}
-                category={category}
-                items={categoryItems}
-                onToggleItem={toggleItem}
-                onToggleSection={toggleSection}
-                onDeleteCategory={deleteCategory}
-                onDeleteItem={deleteItem}
-              />
-            ))}
+            {items.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-4xl mb-3">📝</div>
+                <h3 className="text-lg font-medium text-gray-900 mb-1">
+                  Your list is empty
+                </h3>
+                <p className="text-gray-500 text-sm">
+                  Click the button below to start adding items
+                </p>
+              </div>
+            ) : (
+              Object.entries(groupedItems).map(([category, categoryItems]) => (
+                <PackingSection
+                  key={category}
+                  category={category}
+                  items={categoryItems}
+                  onToggleItem={toggleItem}
+                  onToggleSection={toggleSection}
+                  onDeleteCategory={deleteCategory}
+                  onDeleteItem={deleteItem}
+                />
+              ))
+            )}
           </main>
         </div>
       </div>
