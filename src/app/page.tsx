@@ -16,7 +16,7 @@ export default function Home() {
     if (savedItems) {
       setItems(JSON.parse(savedItems));
     } else {
-      setItems(DEFAULT_ITEMS);
+      setItems([]);
     }
   }, []);
 
