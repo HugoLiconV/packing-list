@@ -1,14 +1,16 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { PackingItem } from "../constants/items";
 import { PackingSection } from "../components/PackingSection";
 import { Toaster, toast } from "react-hot-toast";
 import { CollapsibleAddForm } from "../components/CollapsibleAddForm";
 import { DeleteAllButton } from "components/components/DeleteAllButton";
 import { generateId } from "components/utils/generateId";
+import { SearchInput } from "../components/SearchInput";
 
 export default function Home() {
   const [items, setItems] = useState<PackingItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const lastAddedCategoryRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -49,13 +51,26 @@ export default function Home() {
     );
   };
 
-  const groupedItems = items.reduce((acc, item) => {
-    if (!acc[item.category]) {
-      acc[item.category] = [];
-    }
-    acc[item.category].push(item);
-    return acc;
-  }, {} as Record<string, PackingItem[]>);
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return items;
+
+    const query = searchQuery.toLowerCase();
+    return items.filter(
+      item =>
+        item.name.toLowerCase().includes(query) ||
+        item.category.toLowerCase().includes(query)
+    );
+  }, [items, searchQuery]);
+
+  const groupedItems = useMemo(() => {
+    return filteredItems.reduce((acc, item) => {
+      if (!acc[item.category]) {
+        acc[item.category] = [];
+      }
+      acc[item.category].push(item);
+      return acc;
+    }, {} as Record<string, PackingItem[]>);
+  }, [filteredItems]);
 
   const addItem = (newItem: Omit<PackingItem, "id">) => {
     const item: PackingItem = {
@@ -167,19 +182,32 @@ export default function Home() {
           }}
         >
           <header className="mb-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <h1 className="text-2xl font-semibold text-gray-900">
                 Packing List
               </h1>
               <DeleteAllButton items={items} setItems={setItems} />
             </div>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-gray-500 text-sm mt-1 mb-4">
               Keep track of your travel essentials
             </p>
+            <SearchInput value={searchQuery} onChange={setSearchQuery} />
           </header>
 
           <main className="space-y-4 mb-16">
-            {items.length === 0 ? (
+            {filteredItems.length === 0 && searchQuery && (
+              <div className="text-center py-12">
+                <div className="text-4xl mb-3">🔍</div>
+                <h3 className="text-lg font-medium text-gray-900 mb-1">
+                  No results found
+                </h3>
+                <p className="text-gray-500 text-sm">
+                  Try searching with different keywords
+                </p>
+              </div>
+            )}
+
+            {filteredItems.length === 0 && !searchQuery ? (
               <div className="text-center py-12">
                 <div className="text-4xl mb-3">📝</div>
                 <h3 className="text-lg font-medium text-gray-900 mb-1">
