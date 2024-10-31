@@ -21,7 +21,12 @@ export function CollapsibleAddForm({
   }, [isOpen]);
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm border-t border-gray-200">
+    <div
+      className="bg-white/80 backdrop-blur-sm border-t border-gray-200"
+      style={{
+        paddingBottom: "calc(20px + env(safe-area-inset-bottom, 0px))"
+      }}
+    >
       <div className="max-w-md mx-auto">
         {/* Toggle Button - Always Visible */}
         <button
