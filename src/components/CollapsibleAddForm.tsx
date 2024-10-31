@@ -14,7 +14,12 @@ export function CollapsibleAddForm({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t border-gray-100">
+    <div
+      className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t border-gray-100"
+      style={{
+        paddingBottom: "calc(20px + env(safe-area-inset-bottom, 0px))"
+      }}
+    >
       <div className="max-w-md mx-auto">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -61,7 +66,6 @@ export function CollapsibleAddForm({
               existingCategories={existingCategories}
               onAddItem={item => {
                 onAddItem(item);
-                setIsOpen(false);
               }}
             />
           </div>

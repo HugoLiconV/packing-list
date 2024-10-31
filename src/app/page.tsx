@@ -158,12 +158,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div
-        className="max-w-md mx-auto p-4 pb-32"
-        style={{
-          paddingBottom: "calc(20px + env(safe-area-inset-bottom, 0px))"
-        }}
-      >
+      <div className="max-w-md mx-auto p-4 pb-32">
         <header className="mb-6">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-semibold text-gray-900">
