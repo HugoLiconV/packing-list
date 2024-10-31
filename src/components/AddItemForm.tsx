@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { PackingItem } from "../constants/items";
 
 interface AddItemFormProps {
@@ -10,10 +10,19 @@ export function AddItemForm({
   existingCategories,
   onAddItem
 }: AddItemFormProps) {
+  const noCategories = existingCategories.length === 0;
   const [name, setName] = useState("");
   const [category, setCategory] = useState(existingCategories[0] || "");
   const [newCategory, setNewCategory] = useState("");
-  const [isNewCategory, setIsNewCategory] = useState(false);
+  const [isNewCategory, setIsNewCategory] = useState(noCategories);
+  const newCategoryInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-focus when switching to new category input
+  useEffect(() => {
+    if (isNewCategory) {
+      newCategoryInputRef.current?.focus();
+    }
+  }, [isNewCategory]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +63,7 @@ export function AddItemForm({
         </select>
       ) : (
         <input
+          ref={newCategoryInputRef}
           type="text"
           value={newCategory}
           onChange={e => setNewCategory(e.target.value)}
@@ -62,14 +72,15 @@ export function AddItemForm({
         />
       )}
 
-      <button
-        type="button"
-        onClick={() => setIsNewCategory(!isNewCategory)}
-        className="text-sm text-blue-600 hover:text-blue-700"
-      >
-        {isNewCategory ? "Select existing category" : "Create new category"}
-      </button>
-
+      {existingCategories.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setIsNewCategory(!isNewCategory)}
+          className="text-sm text-blue-600 hover:text-blue-700"
+        >
+          {isNewCategory ? "Select existing category" : "Create new category"}
+        </button>
+      )}
       <button
         type="submit"
         disabled={!name || (!category && !newCategory)}
