@@ -35,6 +35,7 @@ export function AddItemForm({
       });
       setName("");
       setNewCategory("");
+      setCategory(finalCategory);
       setIsNewCategory(false);
     }
   };
