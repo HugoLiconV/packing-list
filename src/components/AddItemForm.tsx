@@ -15,13 +15,9 @@ export function AddItemForm({
   const [category, setCategory] = useState(existingCategories[0] || "");
   const [newCategory, setNewCategory] = useState("");
   const [isNewCategory, setIsNewCategory] = useState(noCategories);
-  console.log("state", {
-    name,
-    category,
-    newCategory,
-    isNewCategory
-  });
   const newCategoryInputRef = useRef<HTMLInputElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const lastFocusedInput = useRef<"name" | "category" | null>(null);
 
   // Auto-focus when switching to new category input
   useEffect(() => {
@@ -43,15 +39,21 @@ export function AddItemForm({
       setNewCategory("");
       setCategory(finalCategory);
       setIsNewCategory(false);
+
+      if (lastFocusedInput.current === "name") {
+        nameInputRef.current?.focus();
+      }
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <input
+        ref={nameInputRef}
         type="text"
         value={name}
         onChange={e => setName(e.target.value)}
+        onFocus={() => (lastFocusedInput.current = "name")}
         placeholder="Add new item..."
         className="w-full h-11 px-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
       />
@@ -90,7 +92,7 @@ export function AddItemForm({
       )}
       <button
         type="submit"
-        disabled={!name && (isNewCategory ? !newCategory : !category)}
+        disabled={!name || (isNewCategory ? !newCategory : !category)}
         className="w-full h-11 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 rounded-lg font-medium transition-colors"
       >
         Add Item
