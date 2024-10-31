@@ -64,7 +64,7 @@ export function PackingSection({
             </h3>
             <p className="text-gray-600 mb-4">
               Are you sure you want to delete &quot;{category}&quot; and all its
-              items? This cannot be undone.
+              items?
             </p>
             <div className="flex justify-end gap-3">
               <button

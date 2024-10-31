@@ -4,6 +4,7 @@ import { PackingItem, DEFAULT_ITEMS } from "../constants/items";
 import { PackingSection } from "../components/PackingSection";
 import { Toaster, toast } from "react-hot-toast";
 import { CollapsibleAddForm } from "../components/CollapsibleAddForm";
+import { DeleteAllButton } from "components/components/DeleteAllButton";
 
 export default function Home() {
   const [items, setItems] = useState<PackingItem[]>([]);
@@ -21,6 +22,8 @@ export default function Home() {
   useEffect(() => {
     if (items.length > 0) {
       localStorage.setItem("packingListItems", JSON.stringify(items));
+    } else {
+      localStorage.removeItem("packingListItems");
     }
   }, [items]);
 
@@ -30,11 +33,6 @@ export default function Home() {
         item.id === itemId ? { ...item, checked: !item.checked } : item
       )
     );
-  };
-
-  const toggleAll = () => {
-    const areAllChecked = items.every(item => item.checked);
-    setItems(items.map(item => ({ ...item, checked: !areAllChecked })));
   };
 
   const toggleSection = (category: string) => {
@@ -160,24 +158,23 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-md mx-auto p-4 pb-32">
+      <div
+        className="max-w-md mx-auto p-4 pb-32"
+        style={{
+          paddingBottom: "calc(20px + env(safe-area-inset-bottom, 0px))"
+        }}
+      >
         <header className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900">Packing List</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-semibold text-gray-900">
+              Packing List
+            </h1>
+            <DeleteAllButton items={items} setItems={setItems} />
+          </div>
           <p className="text-gray-500 text-sm mt-1">
             Keep track of your travel essentials
           </p>
         </header>
-
-        <div className="mb-6">
-          <button
-            onClick={toggleAll}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium transition-colors shadow-sm"
-          >
-            {items.every(item => item.checked)
-              ? "Uncheck All Items"
-              : "Check All Items"}
-          </button>
-        </div>
 
         <main className="space-y-4">
           {Object.entries(groupedItems).map(([category, categoryItems]) => (
