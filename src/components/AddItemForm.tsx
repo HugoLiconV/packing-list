@@ -15,6 +15,12 @@ export function AddItemForm({
   const [category, setCategory] = useState(existingCategories[0] || "");
   const [newCategory, setNewCategory] = useState("");
   const [isNewCategory, setIsNewCategory] = useState(noCategories);
+  console.log("state", {
+    name,
+    category,
+    newCategory,
+    isNewCategory
+  });
   const newCategoryInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-focus when switching to new category input
@@ -84,7 +90,7 @@ export function AddItemForm({
       )}
       <button
         type="submit"
-        disabled={!name || (!category && !newCategory)}
+        disabled={!name && (isNewCategory ? !newCategory : !category)}
         className="w-full h-11 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 rounded-lg font-medium transition-colors"
       >
         Add Item

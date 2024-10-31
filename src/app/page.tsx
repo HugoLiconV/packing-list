@@ -12,14 +12,17 @@ export default function Home() {
   const [items, setItems] = useState<PackingItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const lastAddedCategoryRef = useRef<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     const savedItems = localStorage.getItem("packingListItems");
     if (savedItems) {
       setItems(JSON.parse(savedItems));
     } else {
       setItems([]);
     }
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -171,6 +174,16 @@ export default function Home() {
       }
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-4xl mb-3">🔍</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
