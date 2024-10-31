@@ -5,6 +5,7 @@ import { PackingSection } from "../components/PackingSection";
 import { Toaster, toast } from "react-hot-toast";
 import { CollapsibleAddForm } from "../components/CollapsibleAddForm";
 import { DeleteAllButton } from "components/components/DeleteAllButton";
+import { generateId } from "components/utils/generateId";
 
 export default function Home() {
   const [items, setItems] = useState<PackingItem[]>([]);
@@ -59,7 +60,7 @@ export default function Home() {
   const addItem = (newItem: Omit<PackingItem, "id">) => {
     const item: PackingItem = {
       ...newItem,
-      id: crypto.randomUUID()
+      id: generateId()
     };
     setItems([...items, item]);
     lastAddedCategoryRef.current = item.category;
@@ -157,41 +158,51 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-md mx-auto p-4 pb-32">
-        <header className="mb-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-gray-900">
-              Packing List
-            </h1>
-            <DeleteAllButton items={items} setItems={setItems} />
-          </div>
-          <p className="text-gray-500 text-sm mt-1">
-            Keep track of your travel essentials
-          </p>
-        </header>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="flex-1 overflow-auto">
+        <div
+          className="max-w-md mx-auto p-4"
+          style={{
+            paddingBottom: "calc(20px + env(safe-area-inset-bottom, 0px))"
+          }}
+        >
+          <header className="mb-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-semibold text-gray-900">
+                Packing List
+              </h1>
+              <DeleteAllButton items={items} setItems={setItems} />
+            </div>
+            <p className="text-gray-500 text-sm mt-1">
+              Keep track of your travel essentials
+            </p>
+          </header>
 
-        <main className="space-y-4">
-          {Object.entries(groupedItems).map(([category, categoryItems]) => (
-            <PackingSection
-              key={category}
-              category={category}
-              items={categoryItems}
-              onToggleItem={toggleItem}
-              onToggleSection={toggleSection}
-              onDeleteCategory={deleteCategory}
-              onDeleteItem={deleteItem}
-            />
-          ))}
-        </main>
+          <main className="space-y-4 mb-16">
+            {Object.entries(groupedItems).map(([category, categoryItems]) => (
+              <PackingSection
+                key={category}
+                category={category}
+                items={categoryItems}
+                onToggleItem={toggleItem}
+                onToggleSection={toggleSection}
+                onDeleteCategory={deleteCategory}
+                onDeleteItem={deleteItem}
+              />
+            ))}
+          </main>
+        </div>
       </div>
 
-      <CollapsibleAddForm
-        existingCategories={Array.from(
-          new Set(items.map(item => item.category))
-        )}
-        onAddItem={addItem}
-      />
+      <div className="sticky bottom-0 w-full">
+        <CollapsibleAddForm
+          existingCategories={Array.from(
+            new Set(items.map(item => item.category))
+          )}
+          onAddItem={addItem}
+          isOpen={false}
+        />
+      </div>
 
       <Toaster />
     </div>
