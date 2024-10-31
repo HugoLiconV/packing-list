@@ -17,7 +17,7 @@ export function AddItemForm({
   const [isNewCategory, setIsNewCategory] = useState(noCategories);
   const newCategoryInputRef = useRef<HTMLInputElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
-  const lastFocusedInput = useRef<"name" | "category" | null>(null);
+  // const lastFocusedInput = useRef<"name" | "category" | null>(null);
 
   // Auto-focus when switching to new category input
   useEffect(() => {
@@ -40,9 +40,9 @@ export function AddItemForm({
       setCategory(finalCategory);
       setIsNewCategory(false);
 
-      if (lastFocusedInput.current === "name") {
-        nameInputRef.current?.focus();
-      }
+      // if (lastFocusedInput.current === "name") {
+      //   nameInputRef.current?.focus();
+      // }
     }
   };
 
@@ -53,7 +53,7 @@ export function AddItemForm({
         type="text"
         value={name}
         onChange={e => setName(e.target.value)}
-        onFocus={() => (lastFocusedInput.current = "name")}
+        // onFocus={() => (lastFocusedInput.current = "name")}
         placeholder="Add new item..."
         className="w-full h-11 px-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-500"
       />
