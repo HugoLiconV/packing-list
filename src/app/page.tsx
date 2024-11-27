@@ -7,6 +7,7 @@ import { CollapsibleAddForm } from "../components/CollapsibleAddForm";
 import { DeleteAllButton } from "components/components/DeleteAllButton";
 import { generateId } from "components/utils/generateId";
 import { SearchInput } from "../components/SearchInput";
+import { ToggleAllButton } from "../components/ToggleAllButton";
 
 export default function Home() {
   const [items, setItems] = useState<PackingItem[]>([]);
@@ -175,6 +176,38 @@ export default function Home() {
     );
   };
 
+  const handleToggleAll = () => {
+    const areAllChecked = items.every(item => item.checked);
+    const oldItems = [...items];
+
+    setItems(items.map(item => ({ ...item, checked: !areAllChecked })));
+
+    toast(
+      t => (
+        <div className="flex items-center gap-4">
+          <span>
+            {areAllChecked ? "Unchecked all items" : "Checked all items"}
+          </span>
+          <button
+            onClick={() => {
+              setItems(oldItems);
+              toast.dismiss(t.id);
+            }}
+            className="px-4 py-2 text-base font-medium text-blue-600 hover:text-blue-700 bg-blue-50 rounded-lg active:bg-blue-100 transition-colors"
+          >
+            Undo
+          </button>
+        </div>
+      ),
+      {
+        duration: 4000,
+        position: "bottom-center",
+        className: "bg-white text-gray-900 px-4 py-3",
+        icon: areAllChecked ? "❌" : "✅"
+      }
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -205,6 +238,12 @@ export default function Home() {
               Keep track of your travel essentials
             </p>
             <SearchInput value={searchQuery} onChange={setSearchQuery} />
+
+            {items.length > 0 && (
+              <div className="mt-4">
+                <ToggleAllButton items={items} onToggleAll={handleToggleAll} />
+              </div>
+            )}
           </header>
 
           <main className="space-y-4 mb-16">

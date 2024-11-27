@@ -7,7 +7,7 @@ interface ToggleAllButtonProps {
 
 export function ToggleAllButton({ items, onToggleAll }: ToggleAllButtonProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-sm border-t border-gray-100">
+    <div className="p-4 bg-white/80 backdrop-blur-sm border-t border-gray-100">
       <div className="max-w-md mx-auto">
         <button
           onClick={onToggleAll}
